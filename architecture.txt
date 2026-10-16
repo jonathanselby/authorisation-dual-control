@@ -1,0 +1,39 @@
+AUTHORISATION + DUAL CONTROL V0.1
+
+POLICY -----------------------------+
+ subjects / roles / scopes          |
+ delegations                        |
+ allow_single_person_window         |
+                                    v
+TRUSTED REQUEST/CONTEXT ---> ValidatePolicy
+ actor + optional human             |
+ action + item                      v
+ window-active + reason       resolve principal
+                                    |
+                           agent -> named human only
+                                    |
+                                    v
+                              incident scope
+                                    |
+                                    v
+                            compartment scope
+                                    |
+                                    v
+                              role permission
+                                    |
+                                    v
+                           confirm / maker-checker
+                                    |
+                    self approval requires BOTH:
+                    policy permits exception
+                    AND trusted window active
+                    AND non-blank reason
+                                    |
+                              +-----+-----+
+                              v           v
+                            ALLOW        DENY
+
+NO AUTHENTICATION
+NO PERSISTENCE
+NO WORKFLOW SCHEDULER
+NO USER SCORING

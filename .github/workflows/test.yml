@@ -4,9 +4,6 @@ on:
   push:
   pull_request:
 
-permissions:
-  contents: read
-
 jobs:
   go-test:
     runs-on: ubuntu-latest
@@ -15,10 +12,12 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: '1.26.x'
+      - name: Format contract
+        run: test -z "$(gofmt -l .)"
       - name: Vet
         run: go vet ./...
       - name: Unit tests with race detector
-        run: go test -race ./...
+        run: go test -race -count=1 ./...
       - name: Build
         run: go build -o ./bin/authzcheck ./cmd/authzcheck
       - name: Version contract
@@ -30,5 +29,10 @@ jobs:
         run: |
           out=$(./bin/authzcheck -policy examples/bafflewick/policy.json -request examples/bafflewick/request.json)
           echo "$out" | grep -q '"allowed":true'
-      - name: Boundary acceptance
-        run: go test ./internal/authz -run 'TestCompartment|TestRoles|TestAssignmentAndObserverReadBoundary|TestMakerChecker|TestAgentInheritsHuman' -count=1
+          echo "$out" | grep -q '"human_id":"major-1"'
+          echo "$out" | grep -q '"agent_id":"agent-1"'
+      - name: Policy-boundary acceptance
+        run: >-
+          go test ./internal/authz
+          -run 'TestCompartmentAndIncidentScope|TestRoles|TestMakerCheckerRequiresPolicyControlledException|TestAgentInheritsNamedHumanOnly|TestValidatePolicy|TestMalformedRequestAndUnknownActionAreErrors'
+          -count=1

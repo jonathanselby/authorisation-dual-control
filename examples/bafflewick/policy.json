@@ -1,0 +1,1 @@
+{"subjects":[{"id":"major-1","role":"Major","global_incident_access":true,"compartments":["legal"]},{"id":"minor-1","role":"Minor","assigned_incidents":["INC-001"]}],"delegations":[{"agent_id":"agent-1","human_id":"major-1"}],"allow_single_person_window":false}
