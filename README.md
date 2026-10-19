@@ -4,7 +4,7 @@
 
 **One access model. One item lifecycle. No author approves their own version unless policy explicitly permits the declared exception.**
 
-`authorisation-dual-control` is a small deterministic Go policy component for role access, incident need-to-know, privilege compartments, delegated agents and maker-checker confirmation. It is independently usable; CRAB is one consumer, not part of the runtime contract.
+`authorisation-dual-control` is a small deterministic Go policy component for role access, incident need-to-know, privilege compartments, delegated agents and maker-checker confirmation.
 
 ## What V0.1 proves
 
