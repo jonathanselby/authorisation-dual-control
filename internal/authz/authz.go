@@ -103,6 +103,9 @@ func Evaluate(p Policy, r Request) (Decision, error) {
 	if strings.TrimSpace(r.ActorID) == "" || strings.TrimSpace(r.Action) == "" || strings.TrimSpace(r.Item.IncidentID) == "" {
 		return Decision{}, errors.New("actor, action and incident are required")
 	}
+	if r.Action == "confirm" && strings.TrimSpace(r.Item.AuthorID) == "" {
+		return Decision{}, errors.New("confirm requires item author")
+	}
 	if r.HumanID == r.ActorID && r.HumanID != "" {
 		return Decision{}, errors.New("human_id is only valid for an agent acting for another principal")
 	}

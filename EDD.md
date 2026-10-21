@@ -66,6 +66,8 @@ A policy error is not a governed denial; it is invalid configuration.
 
 If `ActorID` is a configured agent, `HumanID` is mandatory and must equal the agent's configured human. The evaluator then uses only the named human's `Subject` for all access decisions and returns both IDs in `Decision`.
 
+This inheritance is intentional: V0.1 does not define a second role/scope object for an agent. The agent is an attributed delegate of the named human, not an independently authorised principal.
+
 If an ordinary human supplies a different `HumanID`, the request is denied rather than allowing the human to manufacture agent context.
 
 ## 7. Incident and compartment gates
@@ -87,7 +89,9 @@ Unknown actions are malformed input errors, not policy denials.
 
 ## 9. Maker-checker
 
-For `confirm`, the resolved human principal is compared with `Item.AuthorID`.
+For `confirm`, `Item.AuthorID` is mandatory. A missing or whitespace-only author is malformed input because maker-checker cannot be evaluated without an authoritative maker identity.
+
+After principal resolution, the resolved human principal is compared with `Item.AuthorID`.
 
 If equal, self-approval is denied unless:
 
@@ -128,13 +132,15 @@ No persistence, cache, database or global mutable state. Policy, request, item a
 
 ## 13. Test strategy
 
-Named tests cover incident/compartment gates, role matrix, policy-controlled maker-checker exception, agent principal rules, policy validation, malformed request and unknown actions.
+Named tests cover incident/compartment gates, role matrix, required confirmation author identity, policy-controlled maker-checker exception, agent principal rules, policy validation, malformed request and unknown actions.
 
 CI additionally enforces `gofmt`, `go vet`, race tests, native build, exact version, Linux ARM64 build and Bafflewick acceptance.
 
 ## 14. Security boundary
 
 The engine assumes actor IDs, human IDs, item author IDs and the runtime single-person-window signal are authenticated/authoritative inputs from the caller. It does not itself authenticate them.
+
+For confirmation, absence of the authoritative item author fails closed as malformed input rather than being interpreted as “not self”.
 
 The durable policy permission prevents an actor-controlled request flag from being sufficient to enable self-approval.
 
@@ -148,6 +154,7 @@ ARM64 evidence is buildability, not a constrained-device performance claim.
 
 - fixed V0.1 role vocabulary;
 - no field/action ABAC beyond the explicit model;
+- no agent-specific scope independent of the named human principal;
 - no policy persistence/versioning/approval;
 - no approval ledger;
 - no scheduler deciding when a single-person window is active;
@@ -160,6 +167,7 @@ ARM64 evidence is buildability, not a constrained-device performance claim.
 |---|---|
 | incident + compartment scope | `TestCompartmentAndIncidentScope` |
 | role matrix | `TestRoles` |
+| confirm requires authoritative author | `TestConfirmRequiresAuthorIdentity` |
 | maker-checker + policy-gated exception | `TestMakerCheckerRequiresPolicyControlledException` |
 | named-human delegation | `TestAgentInheritsNamedHumanOnly` |
 | invalid/ambiguous policy | `TestValidatePolicy` |

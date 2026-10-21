@@ -49,7 +49,7 @@ Observers may read. Minors may read/comment. Majors may read/comment/propose/con
 A configured agent is not a human subject. Every agent request must name the human principal, the delegation must match, and the decision is evaluated entirely from that human's subject record.
 
 ### FR5 — Maker-checker
-A Major cannot confirm an item version authored by the same human principal under normal operation.
+A confirmation requires the authoritative item author ID. A Major cannot confirm an item version authored by the same human principal under normal operation. A confirmation with no author identity is malformed input because the maker-checker rule cannot be evaluated.
 
 ### FR6 — Controlled single-person exception
 Self-approval requires all three:
@@ -61,7 +61,7 @@ Self-approval requires all three:
 Successful self-approval is explicitly flagged in the decision.
 
 ### FR7 — Denial vs malformed input
-Unknown human, missing scope, insufficient role and delegation mismatch are deterministic denials. Invalid policy, missing required request fields and unknown actions are execution/input errors.
+Unknown human, missing scope, insufficient role and delegation mismatch are deterministic denials. Invalid policy, missing required request fields (including item author for `confirm`) and unknown actions are execution/input errors.
 
 ## 7. Acceptance criteria
 
@@ -75,11 +75,12 @@ V0.1 is accepted when automated evidence shows:
 6. an agent cannot switch to another human;
 7. a normal human cannot spoof agent context;
 8. invalid/ambiguous policy is rejected;
-9. author self-confirmation is denied normally;
-10. request-only single-person activation cannot enable self-approval;
-11. policy + active window + reason can permit self-approval and the decision flags it;
-12. malformed requests and unknown actions are errors;
-13. format, vet, race tests, native build, exact version and `linux/arm64` build pass.
+9. a confirmation without an authoritative author ID is rejected as malformed input;
+10. author self-confirmation is denied normally;
+11. request-only single-person activation cannot enable self-approval;
+12. policy + active window + reason can permit self-approval and the decision flags it;
+13. malformed requests and unknown actions are errors;
+14. format, vet, race tests, native build, exact version and `linux/arm64` build pass.
 
 ## 8. Definition of done
 

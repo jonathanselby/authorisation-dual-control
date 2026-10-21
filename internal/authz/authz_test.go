@@ -81,6 +81,16 @@ func TestMakerCheckerRequiresPolicyControlledException(t *testing.T) {
 	}
 }
 
+func TestConfirmRequiresAuthorIdentity(t *testing.T) {
+	p := policy()
+	for _, author := range []string{"", "   "} {
+		_, err := Evaluate(p, Request{ActorID: "major", Action: "confirm", Item: Item{IncidentID: "I", AuthorID: author}})
+		if err == nil {
+			t.Fatalf("confirm accepted missing author %q", author)
+		}
+	}
+}
+
 func TestAgentInheritsNamedHumanOnly(t *testing.T) {
 	p := policy()
 	d, err := Evaluate(p, Request{ActorID: "agent", HumanID: "major", Action: "propose", Item: Item{IncidentID: "I"}})
